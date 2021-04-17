@@ -73,4 +73,4 @@ jobs:
         appid3: ${{secrets.unicom_appid3}}
         appid4: ${{secrets.unicom_appid4}}
         notify_sctkey: ${{secrets.NOTIFY_SCKEY}}
-      run: node index.js unicom --accountSn=1,2,3,4 --user-1=${user} --password-1=${password} --appid-1=${appid} --user-2=${user2} --password-2=${password2} --appid-2=${appid2} --user-3=${user3} --password-3=${password3} --appid-3=${appid3} --user-4=${user4} --password-4=${password4} --appid-4=${appid4}
+      run: node index.js unicom --accountSn=1,2,3,4 --user1=${user} --password1=${password} --appid1=${appid} --user2=${user2} --password2=${password2} --appid2=${appid2} --user3=${user3} --password3=${password3} --appid3=${appid3} --user4=${user4} --password4=${password4} --appid4=${appid4}
