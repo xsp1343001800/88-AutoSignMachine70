@@ -1,5 +1,5 @@
 //看书里面的5个视频
-//活动入口：主页-小说标签-任意一本小说内页章节中间
+//活动入口：主页-小说标签-任意一本小说内页章节中间 
 var crypto = require("crypto");
 var sign = (data) => {
     let str = "integralofficial&";
@@ -31,7 +31,7 @@ var book5video = {
             arguments4: new Date().getTime(), // time
             arguments6: "",
             netWay: "Wifi",
-            version: `android@8.0102`,
+            version: `android@8.6000`,
         };
         params["sign"] = sign([
             params.arguments1,
@@ -73,7 +73,7 @@ var book5video = {
                     .digest("hex"),
                 netWay: "Wifi",
                 remark: "章节视频得积分",
-                version: `android@8.0102`,
+                version: `android@8.6000`,
                 //orderId: "0923fca6d5ffb8ec017fc6b3cbc5c9c0",
             };
             params["sign"] = sign([

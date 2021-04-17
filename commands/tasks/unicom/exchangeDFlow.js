@@ -54,6 +54,7 @@ var exchangeDFlow = {
         let selectedFlow = product.find(p => p.productId === productId)
         console.info('将兑换', selectedFlow.productName)
 
+
         let { data } = await axios.request({
             headers: {
                 "user-agent": useragent,

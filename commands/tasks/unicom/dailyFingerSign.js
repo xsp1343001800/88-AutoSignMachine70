@@ -124,7 +124,7 @@ var dailyFingerSign = {
             data: params
         })
         return {
-            resultId: data.data?.roundGame?.roundId
+            resultId: data.data.roundGame.roundId
         }
     },
     roundGameForPrize: async (axios, options) => {
@@ -292,7 +292,7 @@ var dailyFingerSign = {
         } while (a <= 4)
 
         if (!noTry) {
-            throw new TryNextEvent('在下一轮尝试一次')
+            throw new TryNextEvent('在下一轮尝试一次！')
         }
     }
 }

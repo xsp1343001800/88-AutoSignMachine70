@@ -1,17 +1,68 @@
-调整为早上6.30执行以避开联通维护（一般都是0点至3点左右维护）
+2021-04-17移除action机制执行脚本（存在太多问题）
+取消自动换1G流量
 
 
-去除所有抽奖
+建议使用本地方式运行
+```
+	首先下载安装好termux
+	打开termux
+	然后运行下面的命令(所有命令都是在英文输入状态下输入)
 
-修改游戏线程为2
+	apt update
+
+	apt install git vim perl nodejs-lts wget curl nano cronie moreutils
+
+	git clone https://github.com/simo8102/88-AutoSignMachine.git
 
 
-修复3G流量（脚本执行完后等一阵子再领比如脚本早上运行你就晚上领）
+	看下文件名字
+	记住那个88-AutoSignMachine
+
+	然后
+
+	mv   88-AutoSignMachine qd
+
+	进入这个文件夹里面
+
+	cd qd
+
+	npm install
+
+	等依赖包安装好了就行了
+	然后运行下面的命令
+
+	node index.js unicom --user 11111 --password 1111 --appid 1555555
+	
+```
+如果多用户就
+启用`node index.js unicom --config default.json`表示配置文件
+```json
+{
+    "accountSn": "1,2",
+    "user-1": "22******1",
+    "password-1": "31******1",
+    "appid-1": "41******1",
+    "user-2": "25******1",
+    "password-3": "72******1",
+    "appid-2": "92******1"
+}
+```
+2021-04-16 添加自动兑换1G流量，并不是都能兑换成功
+
+欢迎大家提交下自己得兑换情况和套餐
+
+并尝试修复积分问题（目前为无效状态，代码暂不上传）
+
+2021-04-16调整为早上6.30和7.30执行以避开联通维护（一般都是0点至3点左右维护）
+
+
+2021-04修改游戏线程为2
+
+
+2021-04修复3G流量（脚本执行完后等一阵子再领比如脚本早上运行你就晚上领）
 
 ![QQ截图20210403173705](https://user-images.githubusercontent.com/45913291/113474571-41d52580-94a3-11eb-921b-16e21bac7455.png)
 
-
-Actions脚本修改为凌晨12点和1点各执行一次任务（建议不要频繁运行脚本以免大数据拉黑）
 
 
 # 88-AutoSignMachine
