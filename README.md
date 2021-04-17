@@ -1,3 +1,25 @@
+
+/* ----->2021-04-17 1.移除原作者的积分兑换和抽奖。2.增加多账号登陆运行。
+添加如下secret:
+| Name | Value | 
+| :---:| :---: |
+| ENABLE_UNICOM | true |
+| UNICOM_PASSWORD | 服务密码 |
+| UNICOM_USER | 手机号 |
+| UNICOM_APPID | 软件ID |
+| UNICOM_PASSWORD2 | 服务密码2 |
+| UNICOM_USER2 | 手机号2 |
+| UNICOM_APPID2 | 软件ID2 |
+| UNICOM_PASSWORD3 | 服务密码3 |
+| UNICOM_USER3 | 手机号3 |
+| UNICOM_APPID3 | 软件ID3 |
+| UNICOM_PASSWORD4 | 服务密码4 |
+| UNICOM_USER4 | 手机号4 |
+| UNICOM_APPID4 | 软件ID4 |
+| NOTIFY_SCKEY | [service酱的key]|
+*/
+
+
 2021-04-17移除action机制执行脚本（存在太多问题）
 取消自动换1G流量
 
