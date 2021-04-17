@@ -39,6 +39,7 @@ var dailyShop = {
         })
         return data
     },
+/*
     duihuan: async (axios, options) => {
         const { encryptmobile } = options
         const useragent = buildUnicomUserAgent(options, 'p')
@@ -58,6 +59,7 @@ var dailyShop = {
             return false
         }
     },
+*/
     dailyfreelottery: async (axios, options) => {
         const { encryptmobile } = options
         console.info('开始抽奖')
@@ -100,7 +102,7 @@ var dailyShop = {
                 --usableAcFreq
             }
         }
-
+/*
         console.info('尝试5次，花费10定向积分兑换抽奖机会')
 
         await require('./integral').getDxDetail(axios, options)
@@ -120,6 +122,8 @@ var dailyShop = {
                 encryptmobile
             })
         } while (--n > 0)
+*/
     }
+
 }
 module.exports = dailyShop
