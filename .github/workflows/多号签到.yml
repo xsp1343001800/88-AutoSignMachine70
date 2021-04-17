@@ -1,4 +1,5 @@
-name: 联通多账号
+name: Unicom_more
+
 on:
 
   branches: [ main ]
