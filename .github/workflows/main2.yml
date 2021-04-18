@@ -1,13 +1,13 @@
-name: 联通多账号
+name: 联通2
 
 
 on:
   
   push: # push触发
-  branches: [ main ]
+    branches: [ main ]
   workflow_dispatch: # 手动触发
   schedule: # 计划任务触发
-    - cron: '*/30 5,13,21 * * *' # cron表达式，Actions时区是UTC时间，所以要往前推8个小时(4-23)
+    - cron: '*/30 13,22 * * *' # cron表达式，Actions时区是UTC时间，所以要往前推8个小时(4-23)
     
 
 jobs:
@@ -76,17 +76,8 @@ jobs:
     - name: Run unicom daily task
    
       env:
-        user: ${{secrets.unicom_user}}
-        password: ${{secrets.unicom_password}}
         user2: ${{secrets.unicom_user2}}
         password2: ${{secrets.unicom_password2}}
-        user3: ${{secrets.unicom_user3}}
-        password3: ${{secrets.unicom_password3}}
-        user4: ${{secrets.unicom_user4}}
-        password4: ${{secrets.unicom_password4}}
-        appid: ${{secrets.unicom_appid}}
         appid2: ${{secrets.unicom_appid2}}
-        appid3: ${{secrets.unicom_appid3}}
-        appid4: ${{secrets.unicom_appid4}}
         notify_sctkey: ${{secrets.NOTIFY_SCKEY}}
-      run: node index.js unicom --accountSn=1,2,3,4 --user-1=${user} --password-1=${password} --appid-1=${appid} --user-2=${user2} --password-2=${password2} --appid-2=${appid2} --user-3=${user3} --password-3=${password3} --appid-3=${appid3} --user-4=${user4} --password-4=${password4} --appid-4=${appid4}
+      run: node index.js unicom --user=${user2} --password=${password2} --appid=${appid2} 
