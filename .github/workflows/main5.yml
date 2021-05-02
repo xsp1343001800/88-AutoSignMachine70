@@ -1,4 +1,4 @@
-name: 联通3
+name: 联通5
 
 
 on:
@@ -9,6 +9,7 @@ on:
   schedule: # 计划任务触发
     - cron: '0 13,22 * * *' # cron表达式，Actions时区是UTC时间，所以要往前推8个小时(4-23)
 #    - cron: '*/59 13,22 * * *' # cron表达式，Actions时区是UTC时间，所以要往前推8个小时(4-23)    
+
 
 jobs:
   daily-task:
@@ -76,8 +77,8 @@ jobs:
     - name: Run unicom daily task
    
       env:
-        user3: ${{secrets.unicom_user3}}
-        password3: ${{secrets.unicom_password3}}
-        appid3: ${{secrets.unicom_appid3}}
+        user5: ${{secrets.unicom_user5}}
+        password5: ${{secrets.unicom_password5}}
+        appid5: ${{secrets.unicom_appid5}}
         notify_sctkey: ${{secrets.NOTIFY_SCKEY}}
-      run: node index.js unicom --user=${user3} --password=${password3} --appid=${appid3} 
+      run: node index.js unicom --user=${user5} --password=${password5} --appid=${appid5} 

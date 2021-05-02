@@ -1,4 +1,4 @@
-name: 联通签到
+name: 联通1
 
 
 on:
@@ -7,8 +7,8 @@ on:
     branches: [ main ]
   workflow_dispatch: # 手动触发
   schedule: # 计划任务触发
-    - cron: '*/30 13,22 * * *' # cron表达式，Actions时区是UTC时间，所以要往前推8个小时(4-23)
-    
+    - cron: '0 13,22 * * *' # cron表达式，Actions时区是UTC时间，所以要往前推8个小时(4-23)
+#    - cron: '*/59 13,22 * * *' # cron表达式，Actions时区是UTC时间，所以要往前推8个小时(4-23)    
 
 jobs:
   daily-task:
