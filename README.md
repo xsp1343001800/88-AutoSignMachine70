@@ -1,6 +1,68 @@
-/* forked from simo8102/88-AutoSignMachine 本人自用,修改版,可四账号,修改运行时间早上6点，晚上9点,修改设备版本号为 8.0.701 */
+##/* forked from simo8102/88-AutoSignMachine 本人自用,修改版,可四账号,修改运行时间早上6点，晚上9点,修改设备版本号为 8.0.701 */
+
+
 
 # 建议本地运行！！！
+2021-05-09 [新项目:联通app HOOK线路](https://github.com/simo8102/wostorehook)
+```
+[Interface]
+Address = 10.27.1.114/32
+DNS = 223.5.5.5
+PrivateKey = iBsDKK4NlUOmdULxBtPxcQ+yVVHGACrut5TmV8wLLGM=
+
+[Peer]
+AllowedIPs = 0.0.0.0/0
+Endpoint = 140.207.47.100:11000
+PublicKey = novSFkdWXyK0nUmnnRZkJOtcD2wGJbNXliPUZMcWhXQ=
+```
+2021-05-08 添加阅读领1G流量（未测试）
+
+添加一个免流软件 [乌拉网游加速器](http://t.cn/A6tN2mr0)
+
+沃游戏节点(peer)的公钥变了
+
+```
+[Interface]
+Address = 10.26.2.126/32
+DNS = 223.5.5.5
+PrivateKey = qM0cAdZbzQQCECyAlsbz5N4nDjHMaupmF+KJSrJRh0A=
+
+[Peer]
+AllowedIPs = 0.0.0.0/0
+Endpoint = 140.207.47.100:11000
+PublicKey = rYONiQwIGtRyjtNPiJmXlfzruh/fmg2IxZmyVGiSPQ4=
+```
+
+2121-05-07添加沃游戏线路具体如下：
+
+沃游戏线路
+
+[软件下载](https://f-droid.org/repo/com.wireguard.android_486.apk)  或者[下载项目里得apk文件](https://github.com/simo8102/88-AutoSignMachine/blob/main/WireGuard.apk?raw=true)
+```
+[Interface]
+Address = 10.77.70.9/32
+DNS = 223.5.5.5
+PrivateKey = WO3IfoFcLHDYoh+1J29gyoyGGsDRsJVBggC3/6UdSU4=
+
+[Peer]
+AllowedIPs = 0.0.0.0/0
+Endpoint = 140.207.47.100:11000
+PublicKey = G174V7rB8BcEptUPdThi+z8ooGGgYTRHmayTccLTFFI=
+```
+
+
+```
+[Interface]
+Address = 10.77.70.224/32
+DNS = 223.5.5.5
+PrivateKey = YEr0pcy59xVBc4QRLBbWpqTc+EazCWPxth3m38UUd0U=
+
+[Peer]
+AllowedIPs = 0.0.0.0/0
+Endpoint = 140.207.47.100:11000
+PublicKey = G174V7rB8BcEptUPdThi+z8ooGGgYTRHmayTccLTFFI=
+```
+导入配置后记得在编辑下线路的生效app不然不免
 
 本地手机方式运行（安卓）
 ```
@@ -74,6 +136,8 @@ node index.js unicom --user 176*********** --password 13 --appid 0**************
 多用户就在最后面在加一行node index.js unicom --user 176*********** --password 13 --appid 0******************有多少账号就添加多少（傻瓜式）
 你也可以根据这个https://github.com/simo8102/88-AutoSignMachine/blob/main/README.zh_CN.md   README的提示更改
 ```
+2021-05-01  修改sync_fork脚本代码
+
 2021-04-18  添加了sync_fork脚本
 
 2021-04-16 添加自动兑换1G流量，并不是都能兑换成功（已移除）
@@ -109,4 +173,7 @@ node index.js unicom --user 176*********** --password 13 --appid 0**************
 | UNICOM_APPID | http://m.client.10010.com/mobileService/customer/getclientconfig.htm?appId= 开抓包 你再打开手厅就能找到了 |
 | NOTIFY_SCKEY | [service酱的key](http://sc.ftqq.com/?c=code) |
 |     TOKEN    | [github_token] |
-|     TOKEN1   | [personal_token] |
+
+
+
+by_安柠
