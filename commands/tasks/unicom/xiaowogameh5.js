@@ -149,7 +149,8 @@ var xiaowogameh5 = {
                 "referer": "http://assistant.flow.wostore.cn",
                 "origin": "http://assistant.flow.wostore.cn"
             },
-            url: `https://xiao.wo.com.cn/woyoujiang/activity/game-report12`,
+            url: "https://www.wostore.cn/woyoujiang/activity/game-report12",
+            // url: `https://xiao.wo.com.cn/woyoujiang/activity/game-report12`,
             method: 'get',
             params: transParams(params)
         })
@@ -157,6 +158,7 @@ var xiaowogameh5 = {
         console.info(data.data)
     },
     playGame: async (axios, options) => {
+        const { game } = options
         const { jar, gid } = await xiaowogameh5.openPlatLine(axios, options)
 
         let cookiesJson = jar.toJSON()
@@ -166,9 +168,9 @@ var xiaowogameh5 = {
         let launchid = cookiesJson.cookies.find(i => i.key == 'stl_id')
         launchid = launchid.value
 
-        let n = 6
+        let n = game.currentMinute
 
-        while (n > 0) {
+        while (n < game.minute) {
             await xiaowogameh5.dogameReport12(axios, {
                 ...options,
                 uid,
@@ -178,7 +180,7 @@ var xiaowogameh5 = {
             console.info('等待1分钟')
             await new Promise((resolve, reject) => setTimeout(resolve, (Math.floor(Math.random() * 10) + 60) * 1000))
 
-            --n
+            ++n
         }
 
     }

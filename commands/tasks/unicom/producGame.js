@@ -1,10 +1,20 @@
 const CryptoJS = require("crypto-js");
 var crypto = require('crypto');
-const { default: PQueue } = require('p-queue');
+const {
+    default: PQueue
+} = require('p-queue');
 const moment = require('moment');
 const path = require('path');
-const { appInfo, buildUnicomUserAgent } = require('../../../utils/device')
-const { signRewardVideoParams } = require('./CryptoUtil')
+const {
+    appInfo,
+    buildUnicomUserAgent
+} = require('../../../utils/device')
+const {
+    signRewardVideoParams
+} = require('./CryptoUtil');
+const {
+    info
+} = require("console");
 var transParams = (data) => {
     let params = new URLSearchParams();
     for (let item in data) {
@@ -60,7 +70,11 @@ var producGame = {
     },
 
     playGame: async (axios, options) => {
-        const { game, launchid, jar } = options
+        const {
+            game,
+            launchid,
+            jar
+        } = options
 
         let cookiesJson = jar.toJSON()
         let jwt = cookiesJson.cookies.find(i => i.key == 'jwt')
@@ -76,6 +90,8 @@ var producGame = {
         let launchId1 = launchid || new Date().getTime() + ''
 
         let n = 1;
+        //玩游戏时长参数 game.minute
+        let minute = game.minute || 6;
 
         do {
             console.info('第', n, '次')
@@ -95,7 +111,7 @@ var producGame = {
             let busiBuff = {
                 extInfo: null,
                 appid: game.gameCode,
-                factType: n == 6 ? 13 : 12,
+                factType: n == minute ? 13 : 12,
                 duration: null,
                 reportTime: Math.floor(new Date().getTime() / 1000) + n * 62,
                 afterCertify: 0,
@@ -145,11 +161,14 @@ var producGame = {
 
             await new Promise((resolve, reject) => setTimeout(resolve, 45 * 1000))
 
-            ++n
-        } while (n <= 6)
+                ++n
+        } while (n <= minute)
     },
     gameInfo: async (axios, options) => {
-        const { game, jar } = options
+        const {
+            game,
+            jar
+        } = options
 
         let cookiesJson = jar.toJSON()
         let jwt = cookiesJson.cookies.find(i => i.key == 'jwt')
@@ -225,25 +244,6 @@ var producGame = {
             'deviceType': 'Android',
             'clientVersion': appInfo.version,
         }
-        /* let { data, config } = await axios.request({
-            baseURL: 'https://m.client.10010.com/',
-            headers: {
-                "user-agent": useragent,
-                "referer": "https://img.client.10010.com",
-                "origin": "https://img.client.10010.com"
-            },
-            url: `/producGameApp`,
-            method: 'post',
-            data: transParams(params)
-        })
-        if (data) {
-            return {
-                jar: config.jar,
-                popularList: data.popularList || []
-            }
-        } else {
-            console.error('记录失败')
-        } */
         let defaults = {
             baseURL: 'https://m.client.10010.com/',
             headers: {
@@ -278,9 +278,9 @@ var producGame = {
                 // 合并去重
                 [...androidData.popularList, ...iosData.popularList].forEach(game => games.set(game.id, game));
                 popularList = [...games.values()];
-                // 取出ios任务
-                let iosTasks = iosData.popularList.filter(a => !androidData.popularList.some(i => i.id === a.id));
-                iosTasks.forEach(e => gameDeviceTypes.set(e.id, "iOS"));
+                // 取出ios游戏
+                let iosGames = iosData.popularList.filter(a => !androidData.popularList.some(i => i.id === a.id));
+                iosGames.forEach(e => gameDeviceTypes.set(e.id, "iOS"));
             }
             return {
                 jar: jar,
@@ -292,7 +292,9 @@ var producGame = {
         }
     },
     gameverify: async (axios, options) => {
-        const { jar } = options
+        const {
+            jar
+        } = options
         let cookiesJson = jar.toJSON()
         let jwt = cookiesJson.cookies.find(i => i.key == 'jwt')
         if (!jwt) {
@@ -300,7 +302,9 @@ var producGame = {
         }
         jwt = jwt.value
 
-        let { data } = await axios.request({
+        let {
+            data
+        } = await axios.request({
             baseURL: 'https://m.client.10010.com/',
             headers: {
                 "user-agent": "okhttp/4.4.0",
@@ -326,16 +330,21 @@ var producGame = {
         }
     },
     gamerecord: async (axios, options) => {
-        const { gameId } = options
+        const {
+            gameId,
+            deviceType
+        } = options
         const useragent = buildUnicomUserAgent(options, 'p')
         let params = {
             'methodType': 'record',
-            'deviceType': 'Android',
+            'deviceType': deviceType,
             'clientVersion': appInfo.version,
             'gameId': gameId,
             'taskId': ''
         }
-        let { data } = await axios.request({
+        let {
+            data
+        } = await axios.request({
             headers: {
                 "user-agent": useragent,
                 "referer": "https://img.client.10010.com",
@@ -352,6 +361,9 @@ var producGame = {
         }
     },
     queryIntegral: async (axios, options) => {
+        let {
+            deviceType
+        } = options;
         const useragent = buildUnicomUserAgent(options, 'p')
         let params = {
             'methodType': 'queryIntegral',
@@ -359,9 +371,12 @@ var producGame = {
             'videoIntegral': '0',
             'isVideo': 'Y',
             'clientVersion': appInfo.version,
-            'deviceType': 'Android'
+            'deviceType': deviceType
         }
-        let { data, config } = await axios.request({
+        let {
+            data,
+            config
+        } = await axios.request({
             headers: {
                 "user-agent": useragent,
                 "referer": "https://img.client.10010.com",
@@ -384,20 +399,49 @@ var producGame = {
             'deviceType': 'Android',
             'clientVersion': appInfo.version
         }
-        let { data, config } = await axios.request({
+
+        let defaults = {
+            baseURL: 'https://m.client.10010.com',
             headers: {
                 "user-agent": useragent,
                 "referer": "https://img.client.10010.com",
                 "origin": "https://img.client.10010.com"
             },
-            url: `https://m.client.10010.com/producGameTaskCenter`,
+            url: `/producGameTaskCenter`,
             method: 'post',
             data: transParams(params)
-        })
-        if (data.code === '0000') {
+        }
+        // 安卓
+        let {
+            data: androidGames,
+            config
+        } = await axios.request(defaults)
+        // ios
+        let {
+            data: iosGames
+        } = await axios.request(Object.assign({}, defaults, {
+            data: transParams(Object.assign({}, params, {
+                'deviceType': 'iOS'
+            }))
+        }));
+        if (androidGames) {
+            let jar = config.jar,
+                games = androidGames.data || [],
+                gameDeviceTypes = new Map();
+            androidGames.data.forEach(e => gameDeviceTypes.set(e.game_id, "Android"));
+            if (iosGames) {
+                let map = new Map();
+                // 合并去重
+                [...androidGames.data, ...iosGames.data].forEach(game => map.set(game.id, game));
+                games = [...map.values()];
+                // 取出ios游戏
+                let iosData = iosGames.data.filter(a => !androidGames.data.some(i => i.id === a.id));
+                iosData.forEach(e => gameDeviceTypes.set(e.game_id, "iOS"));
+            }
             return {
-                jar: config.jar,
-                games: data.data
+                jar: jar,
+                gameDeviceTypes: gameDeviceTypes,
+                games: games
             }
         } else {
             console.error('获取游戏任务失败')
@@ -405,22 +449,24 @@ var producGame = {
         }
     },
     doGameFlowTask: async (axios, options) => {
-        let { popularList: allgames, jar } = await producGame.popularGames(axios, options)
+        let {
+            popularList: allgames,
+            jar
+        } = await producGame.popularGames(axios, options)
         let games = allgames.filter(g => g.state === '0')
         console.info('剩余未完成game', games.length)
-        let queue = new PQueue({ concurrency: 2 });
 
-        console.info('调度任务中', '并发数', 2)
-        for (let game of games) {
-            queue.add(async () => {
-                console.info(game.name)
-                // 沙巴克传奇特殊处理
-                if (game.qqMark === "N" && game.id === "d9b73d461879497f9c5fb2ad9dacf783") {
-                    await require('./xiaowogameh5').playGame(axios, {
-                        ...options,
-                        game
-                    })
-                } else {
+        // 手q
+        let qqGames = games.filter(g => g.qqMark === 'Y');
+        if (qqGames.length > 0) {
+            let queue = new PQueue({
+                concurrency: 2
+            });
+            console.info('手q未完成数', qqGames.length)
+            console.info('手q调度任务中', '并发数', 2)
+            for (let game of qqGames) {
+                queue.add(async () => {
+                    console.info(`${game.name}--游戏时长: ${game.minute} 分钟`)
                     await producGame.gameverify(axios, {
                         ...options,
                         jar,
@@ -431,14 +477,47 @@ var producGame = {
                         jar,
                         game
                     })
-                }
-            })
+                })
+            }
+
+            await queue.onIdle();
         }
 
-        await queue.onIdle()
+        // 沃游戏
+        let woGames = games.filter(g => g.qqMark === 'N');
+        if (woGames.length > 0) {
+            console.info('沃游戏未完成数', woGames.length)
+            /* if (process.env['GITHUB_ACTIONS']) {
+                console.warn("GitHub Actions 无法访问沃游戏，跳过本次任务，继续下一任务。")
+            } else {
+                
+            } */
+            let queue = new PQueue({
+                concurrency: 1
+            });
+            console.info('沃游戏调度任务中', '并发数', 1)
+            for (let game of woGames) {
+                queue.add(async () => {
+                    console.info(`${game.name}--游戏时长: ${game.minute} 分钟`)
+                    await require('./xiaowogameh5').playGame(axios, {
+                        ...options,
+                        game
+                    })
 
-        await new Promise((resolve, reject) => setTimeout(resolve, (Math.floor(Math.random() * 10) + 30) * 1000))
-        let { popularList: gameTasks, gameDeviceTypes } = await producGame.timeTaskQuery(axios, options)
+                    console.info(`【${game.name}】游戏结束`)
+                    console.info("继续等待一分钟，完成游戏时长上报")
+                    await new Promise((resolve, reject) => setTimeout(resolve, (Math.floor(Math.random() * 10) + 60) * 1000))
+                })
+            }
+            await queue.onIdle();
+        }
+
+        await new Promise((resolve, reject) => setTimeout(resolve, (Math.floor(Math.random() * 10) + 15) * 1000))
+
+        let {
+            popularList: gameTasks,
+            gameDeviceTypes
+        } = await producGame.timeTaskQuery(axios, options)
         games = gameTasks.filter(g => g.state === '1')
         console.info('剩余未领取game', games.length)
         for (let game of games) {
@@ -446,20 +525,26 @@ var producGame = {
             await producGame.gameFlowGet(axios, {
                 ...options,
                 gameId: game.id,
-                deviceType: gameDeviceTypes.get(game.id) && "Android"
+                deviceType: gameDeviceTypes.get(game.id)
             })
         }
     },
     doGameIntegralTask: async (axios, options) => {
-        let { games, jar } = await producGame.getTaskList(axios, options)
-        games = games.filter(d => d.task === '5' && d.reachState === '0' && d.task_type === 'duration')
+        let {
+            games,
+            jar,
+            gameDeviceTypes
+        } = await producGame.getTaskList(axios, options)
+        games = games.filter(d => d.reachState === '0' && d.task_type === 'duration')
         console.info('剩余未完成game', games.length)
-        let queue = new PQueue({ concurrency: 2 });
+        let queue = new PQueue({
+            concurrency: 2
+        });
 
         console.info('调度任务中', '并发数', 2)
         for (let game of games) {
             queue.add(async () => {
-                console.info(game.name)
+                console.info(`${game.name}-游戏时长: ${game.task} 分钟`)
                 await producGame.gameverify(axios, {
                     ...options,
                     jar,
@@ -467,14 +552,16 @@ var producGame = {
                 })
                 await producGame.gamerecord(axios, {
                     ...options,
-                    gameId: game.game_id
+                    gameId: game.game_id,
+                    deviceType: gameDeviceTypes.get(game.game_id)
                 })
                 await producGame.playGame(axios, {
                     ...options,
                     jar,
                     game: {
                         ...game,
-                        gameCode: game.resource_id
+                        gameCode: game.resource_id,
+                        minute: game.task
                     }
                 })
             })
@@ -483,19 +570,53 @@ var producGame = {
         await queue.onIdle()
 
         await new Promise((resolve, reject) => setTimeout(resolve, (Math.floor(Math.random() * 10) + 30) * 1000))
-        let { games: cgames } = await producGame.getTaskList(axios, options)
-        games = cgames.filter(d => d.task === '5' && d.reachState === '1' && d.task_type === 'duration')
+        let {
+            games: cgames,
+            gameDeviceTypes: deviceTypes
+        } = await producGame.getTaskList(axios, options)
+        games = cgames.filter(d => d.reachState === '1' && d.task_type === 'duration')
         console.info('剩余未领取game', games.length)
         for (let game of games) {
             await new Promise((resolve, reject) => setTimeout(resolve, (Math.floor(Math.random() * 10) + 20) * 1000))
             await producGame.gameIntegralGet(axios, {
                 ...options,
-                taskCenterId: game.id
+                taskCenterId: game.id,
+                reward: game.task_reward,
+                deviceType: deviceTypes.get(game.game_id)
             })
         }
 
+        let {
+            games: v_games
+        } = await producGame.getTaskList(axios, options)
+        let video_task = v_games.find(d => d.task_type === 'video')
+
+        if (video_task.reachState === '0') {
+            let n = parseInt(video_task.task) - parseInt(video_task.progress)
+            console.info('领取视频任务奖励,剩余', n, '次')
+            let {
+                jar
+            } = await producGame.watch3TimesVideoQuery(axios, options)
+            let i = 1
+            while (i <= n) {
+                await producGame.watch3TimesVideo(axios, {
+                    ...options,
+                    jar
+                })
+                await new Promise((resolve, reject) => setTimeout(resolve, (Math.floor(Math.random() * 5) + 2) * 200))
+                await producGame.getTaskList(axios, options)
+                await producGame.queryIntegral(axios, {
+                        ...options,
+                        taskCenterId: video_task.id
+                    })
+                    ++i
+            }
+        }
+
         await new Promise((resolve, reject) => setTimeout(resolve, (Math.floor(Math.random() * 5) + 5) * 1000))
-        let { games: ngames } = await producGame.getTaskList(axios, options)
+        let {
+            games: ngames
+        } = await producGame.getTaskList(axios, options)
         let task_times = ngames.find(d => d.task === '3' && d.task_type === 'times')
         if (task_times && task_times.reachState === '1') {
             await new Promise((resolve, reject) => setTimeout(resolve, (Math.floor(Math.random() * 10) + 15) * 1000))
@@ -512,7 +633,9 @@ var producGame = {
             'deviceType': 'Android',
             'clientVersion': appInfo.version
         }
-        let { data } = await axios.request({
+        let {
+            data
+        } = await axios.request({
             baseURL: 'https://m.client.10010.com/',
             headers: {
                 "user-agent": useragent,
@@ -531,7 +654,10 @@ var producGame = {
         }
     },
     gameFlowGet: async (axios, options) => {
-        const { gameId, deviceType } = options
+        const {
+            gameId,
+            deviceType
+        } = options
         const useragent = buildUnicomUserAgent(options, 'p')
         let params = {
             'userNumber': options.user,
@@ -540,7 +666,9 @@ var producGame = {
             'deviceType': deviceType,
             'clientVersion': appInfo.version
         }
-        let { data } = await axios.request({
+        let {
+            data
+        } = await axios.request({
             baseURL: 'https://m.client.10010.com/',
             headers: {
                 "user-agent": useragent,
@@ -555,23 +683,33 @@ var producGame = {
         if (data) {
             console.info(data.msg)
             if (data.msg.indexOf('防刷策略接口校验不通过') !== -1) {
-               console.error('获取奖励失败')
+                console.error('获取奖励失败')
             }
-            console.reward('正在领取奖励 *')
+            try {
+                console.reward('flow', data.data.flow + 'm')
+            } catch (error) {
+                console.error('获取奖励失败')
+            }
         } else {
             console.error('获取奖励失败')
         }
     },
     gameIntegralGet: async (axios, options) => {
-        const { taskCenterId } = options
+        const {
+            taskCenterId,
+            reward,
+            deviceType
+        } = options
         const useragent = buildUnicomUserAgent(options, 'p')
         let params = {
             'methodType': 'taskGetReward',
             'taskCenterId': taskCenterId,
-            'deviceType': 'Android',
+            'deviceType': deviceType || 'Android',
             'clientVersion': appInfo.version,
         }
-        let { data } = await axios.request({
+        let {
+            data
+        } = await axios.request({
             headers: {
                 "user-agent": useragent,
                 "referer": "https://img.client.10010.com",
@@ -584,16 +722,20 @@ var producGame = {
         if (data) {
             console.info(data.msg)
             if (data.msg.indexOf('防刷策略接口校验不通过') !== -1) {
-            //    throw new Error('出现【防刷策略接口校验不通过】, 取消本次执行')
-            console.error('获取奖励失败')
+                //    throw new Error('出现【防刷策略接口校验不通过】, 取消本次执行')
+                console.error('获取奖励失败')
             }
-            console.reward('integral', 5)
+            if (reward) {
+                console.reward('integral', reward)
+            }
         } else {
             console.error('获取奖励失败')
         }
     },
     gameBox: async (axios, options) => {
-        let { games: v_games } = await producGame.getTaskList(axios, options)
+        let {
+            games: v_games
+        } = await producGame.getTaskList(axios, options)
         let box_task = v_games.find(d => d.task_type === 'box' && d.reachState !== '2')
         if (box_task) {
             await producGame.gameIntegralGet(axios, {
@@ -604,10 +746,10 @@ var producGame = {
     },
     watch3TimesVideoQuery: async (request, options) => {
         let params = {
-            'arguments1': 'AC20200728150217', 
-            'arguments2': 'GGPD', 
-            'arguments3': '96945964804e42299634340cd2650451', 
-            'arguments4': new Date().getTime(), 
+            'arguments1': 'AC20200728150217',
+            'arguments2': 'GGPD',
+            'arguments3': '96945964804e42299634340cd2650451',
+            'arguments4': new Date().getTime(),
             'arguments6': '',
             'netWay': 'Wifi',
             'version': appInfo.unicom_version,
@@ -620,7 +762,9 @@ var producGame = {
         })
     },
     watch3TimesVideo: async (axios, options) => {
-        const { jar } = options
+        const {
+            jar
+        } = options
         let params = {
             'arguments1': 'AC20200728150217',
             'arguments2': 'GGPD',
@@ -637,15 +781,16 @@ var producGame = {
             'codeId': 945535736
         }
         params['sign'] = signRewardVideoParams([params.arguments1, params.arguments2, params.arguments3, params.arguments4])
-        await require('./taskcallback').doTask(axios, {
+        await require('./taskcallback').reward(axios, {
             ...options,
             params,
             jar
         })
     },
     doTodayDailyTask: async (axios, options) => {
-
-        let { games } = await producGame.getTaskList(axios, options)
+        let {
+            games
+        } = await producGame.getTaskList(axios, options)
         let today_task = games.find(d => d.task_type === 'todayTask')
         if (!today_task) {
             console.info('未取得今日任务，跳过')
@@ -656,14 +801,245 @@ var producGame = {
         } else if (today_task.reachState === '1') {
             await producGame.gameIntegralGet(axios, {
                 ...options,
-                taskCenterId: today_task.id
+                taskCenterId: today_task.id,
             })
-            console.reward('flow', '100m *')
-            console.info('领取完成今日任务流量+100m')
+            console.reward('flow', today_task.task_reward)
+            console.info(`领取完成今日任务流量+${today_task.task_reward}`)
         } else if (today_task.reachState === '2') {
             console.info('每日日常任务已完成')
         }
-    }
+    },
+    /**
+     * 游戏红包总金额
+     * 
+     * @param {*} axios 
+     * @param {*} options 
+     * @returns 
+     */
+    queryActRewardInfo: async (axios, options) => {
+        const useragent = buildUnicomUserAgent(options, 'p')
+        let {
+            data
+        } = await axios.request({
+            baseURL: 'https://m.client.10010.com',
+            headers: {
+                "user-agent": useragent,
+                "referer": "https://img.client.10010.com",
+                "origin": "https://img.client.10010.com"
+            },
+            url: `/game_server/newGameActivity/actRewardInfo`,
+            method: 'post',
+            data: transParams({
+                'deviceType': 'Android',
+                'clientVersion': appInfo.version
+            })
+        })
+        return {
+            ...data.data
+        }
+    },
+    /**
+     * 领取抽奖次数
+     * @param {*} axios 
+     * @param {*} options 
+     */
+    getDrawTimes: async (axios, options) => {
+        const useragent = buildUnicomUserAgent(options, 'p')
+        let params = {
+            'methodType': 1,
+            'mobile': options.user,
+            'param': {
+                'deviceType': 'Android',
+                'gameType': 'Y'
+            }
+        }
+        let {
+            data
+        } = await axios.request({
+            baseURL: 'https://m.client.10010.com',
+            headers: {
+                "user-agent": useragent,
+                "referer": "https://img.client.10010.com",
+                "origin": "https://img.client.10010.com"
+            },
+            url: `/finderInterface/myCircleForEntertainment`,
+            method: 'post',
+            data: transParams(params)
+        })
+        console.info(data.desc)
+    },
+    /**
+     * 领取抽奖次数
+     * @param {*} axios 
+     * @param {*} options 
+     */
+    getDrawTimes: async (axios, options) => {
+        const useragent = buildUnicomUserAgent(options, 'p')
+        let {
+            game
+        } = options
+        let params = {
+            'deviceType': 'Android',
+            'clientVersion': appInfo.version,
+            'gameId': game.gameId,
+            'gamePosition': game.templateSystem ? 1 : 2,
+            'deviceCode': '',
+        }
+        let {
+            data
+        } = await axios.request({
+            baseURL: 'https://m.client.10010.com',
+            headers: {
+                "user-agent": useragent,
+                "referer": "https://img.client.10010.com",
+                "origin": "https://img.client.10010.com"
+            },
+            url: `/game_server/newGameActivity/getDrawTimes`,
+            method: 'post',
+            data: transParams(params)
+        })
+        console.info(data.desc)
+    },
+    /**
+     * 抽奖游戏列表
+     * 
+     * @param {*} axios 
+     * @param {*} options 
+     * @returns 
+     */
+    getLotteryGameList: async (axios, options) => {
+        const useragent = buildUnicomUserAgent(options, 'p')
+        let {
+            data,
+            config
+        } = await axios.request({
+            baseURL: 'https://m.client.10010.com',
+            headers: {
+                "user-agent": useragent,
+                "referer": "https://img.client.10010.com",
+                "origin": "https://img.client.10010.com"
+            },
+            url: `/game_server/newGameActivity/gameList`,
+            method: 'post',
+            data: transParams({
+                'deviceType': 'Android',
+                'clientVersion': appInfo.version
+            })
+        })
+        if (data.code === '0000') {
+            return {
+                jar: config.jar,
+                games: [...data.data.newGames, ...data.data.templateGames]
+            }
+        } else {
+            throw new Error("游戏列表获取失败")
+        }
+    },
+    /**
+     * 游戏抽奖
+     * 
+     * @param {*} axios 
+     * @param {*} options 
+     */
+    doLottery: async (axios, options) => {
+        const useragent = buildUnicomUserAgent(options, 'p')
+        let params = {
+            'deviceType': 'Android',
+            'clientVersion': appInfo.version,
+            'deviceCode': '',
+            'isTen': 'N'
+        }
+        let {
+            data
+        } = await axios.request({
+            baseURL: 'https://m.client.10010.com',
+            headers: {
+                "user-agent": useragent,
+                "referer": "https://img.client.10010.com",
+                "origin": "https://img.client.10010.com"
+            },
+            url: `/game_server/newGameActivity/lottery`,
+            method: 'post',
+            data: transParams(params)
+        })
+        if (data.code === '0000') {
+            let res = JSON.parse(data.data)[0];
+            console.reward('红包', res.ticketVal)
+            console.info(data.desc, res.ticketName)
+        } else {
+            console.error('抽奖失败', data.desc)
+        }
+    },
+    /**
+     * 全礼以赴，嗨玩一夏 抽88元
+     * 
+     * @param {*} axios 
+     * @param {*} options 
+     */
+    doGameLottery: async (axios, options) => {
+        // 1次免费抽奖
+        await producGame.doLottery(axios, options)
+
+        let {
+            jar,
+            games: allGames
+        } = await producGame.getLotteryGameList(axios, options)
+        let games = allGames.filter(g => g.actState === '0')
+        console.info('剩余未完成game', games.length)
+
+        let queue = new PQueue({
+            concurrency: 2
+        });
+        for (let game of games) {
+            game['minute'] = game.gameMinute;
+            game['gameCode'] = game.resourceId;
+
+            queue.add(async () => {
+                console.info(`${game.name}--游戏时长: ${game.minute} 分钟`)
+
+                await producGame.gameverify(axios, {
+                    ...options,
+                    jar,
+                    game
+                })
+                await producGame.gamerecord(axios, {
+                    ...options,
+                    gameId: game.gameId,
+                    deviceType: 'Android' //gameDeviceTypes.get(game.game_id)
+                })
+                await producGame.playGame(axios, {
+                    ...options,
+                    jar,
+                    game
+                })
+            })
+        }
+
+        await queue.onIdle();
+
+        await new Promise((resolve, reject) => setTimeout(resolve, (Math.floor(Math.random() * 10) + 30) * 1000))
+
+        let {
+            games: newGames
+        } = await producGame.getLotteryGameList(axios, options)
+        games = newGames.filter(g => g.actState === '1')
+
+        // 领取抽奖次数并抽奖
+        for (let game of games) {
+            await producGame.getDrawTimes(axios, {
+                ...options,
+                game
+            })
+            await producGame.doLottery(axios, options)
+
+            await new Promise((resolve, reject) => setTimeout(resolve, (Math.floor(Math.random() * 10) + 5) * 1000))
+        }
+
+        let {
+            costSum
+        } = await producGame.queryActRewardInfo(axios, options)
+        console.info('红包总金额', costSum)
+    },
 }
 
 
