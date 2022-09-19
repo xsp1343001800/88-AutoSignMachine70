@@ -15,8 +15,8 @@ function generateMixed(n) {
 
 
 var appInfo = {
-    version: 9.0300,
-    unicom_version: 'android@9.0300',
+    version: 9.0400,
+    unicom_version: 'android@9.0400',
     app_name: '中国联通',
     package_name: 'com.sinovatech.unicom.ui'
 }
